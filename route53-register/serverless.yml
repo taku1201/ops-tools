@@ -1,0 +1,45 @@
+service: route53-register
+frameworkVersion: '2'
+configValidationMode: error
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, self:custom.defaultStage}
+  environment:
+    SLACK_TOKEN: ${self:custom.environment.${self:provider.stage}.slack.token}
+    SLACK_CHANNEL: ${self:custom.environment.${self:provider.stage}.slack.channel}
+  iam:
+    role:
+      name: route53-register-${self:provider.stage}
+      path: '/service/'
+      statements:
+        - Effect: Allow
+          Action:
+            - 'ec2:DescribeInstances'
+          Resource:
+            - '*'
+        - Effect: Allow
+          Action:
+            - 'route53:ListHostedZonesByVPC'
+          Resource:
+            - '*'
+  eventBridge:
+    useCloudFormation: true
+custom:
+  defaultStage: staging
+  environment:
+    staging: ${file(env/staging.yml)}
+functions:
+  register:
+    handler: route53-register.register
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - aws.ec2
+            detail-type:
+              - EC2 Instance State-change Notification
+            detail:
+              state:
+                - running
