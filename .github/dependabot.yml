@@ -1,6 +1,6 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: /ops-tools
+    directory: /route53-register
     schedule:
       interval: daily
