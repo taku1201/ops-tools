@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@aws-sdk/client-ec2": "^3.57.0",
+    "@aws-sdk/client-ec2": "^3.82.0",
     "@aws-sdk/client-route-53": "^3.56.0",
     "@slack/web-api": "^6.7.0"
   }
